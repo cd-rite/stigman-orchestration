@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <title>STIG Manager with Apache</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<style>
+body {
+    max-width:650px;
+    margin:40px auto;
+    padding:0 10px;
+    font:18px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    color:#444;
+}
+
+h1,h2,h3 {
+    line-height:1.2
+}
+
+@media (prefers-color-scheme:dark) {
+    body {
+        color:white;background:#444
+    }
+    a:link {
+        color:#5bf
+    }
+    a:visited {
+        color:#ccf
+    }
+}
+</style>
+<body>
+<h2>STIG Manager with Apache HTTP Server</h2>
+
+<p>Apache reverse proxy is running successfully!</p>
+
+<h3>Available Services:</h3>
+<ul>
+    <li><a href="/stigman/">STIG Manager Application</a></li>
+    <li><a href="/kc/admin">Keycloak Admin Console</a> (Credentials: admin/Pa55w0rd)</li>
+</ul>
+
+<p>This reverse proxy configuration provides:</p>
+<ul>
+    <li>SSL/TLS termination on port 443</li>
+    <li>Client certificate verification (CAC authentication)</li>
+    <li>Request proxying to backend services</li>
+    <li>Proper header forwarding including client certificates</li>
+</ul>
+
+<p><small>Note: SSI (Server Side Includes) is disabled in this configuration.
+To view client certificate details, check the browser's developer tools network tab for SSL information.</small></p>
+</body>
+</html>
