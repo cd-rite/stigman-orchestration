@@ -1,20 +1,21 @@
-# STIG Manager with CAC Authentication
+# STIG Manager with CAC Authentication using HAProxy
 
 version: '3.7'
 
 services:
-  apache:
-    image: httpd:2.4
-    # alternative image from Ironbank
-    # image: registry1.dso.mil/ironbank/opensource/apache/httpd24:2.4
+  haproxy:
+    image: haproxy:2.8-alpine
     volumes:
-      - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - ./certs/localhost/localhost.crt:/usr/local/apache2/conf/cert.pem
-      - ./certs/localhost/localhost.key:/usr/local/apache2/conf/privkey.pem
-      - ./certs/dod/DoD_Root_CAs.pem:/usr/local/apache2/conf/dod-certs.pem
-      - ./apache/index.html:/usr/local/apache2/htdocs/index.html
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./haproxy/combined.pem:/usr/local/etc/haproxy/certs/combined.pem:ro
+      - ./certs/dod/DoD_Root_CAs.pem:/usr/local/etc/haproxy/certs/dod-certs.pem:ro
+      - ./haproxy/index.html:/usr/local/etc/haproxy/index.html:ro
     ports:
-    - "443:443"
+      - "443:443"
+    depends_on:
+      - keycloak
+      - stigman
+
   keycloak:
     image: quay.io/keycloak/keycloak:19.0.2
     # alternative image from Ironbank
@@ -33,6 +34,7 @@ services:
       - ./kc/create-x509-user.jar:/opt/keycloak/providers/create-x509-user.jar
       # uncomment below to persist Keycloak data
       # - ./kc/h2:/opt/keycloak/data/h2
+
   stigman:
     image: nuwcdivnpt/stig-manager:1.5.13
     # alternative image based on Ironbank Node.js
@@ -45,11 +47,12 @@ services:
       - STIGMAN_DB_USER=stigman
       - STIGMAN_DB_PASSWORD=stigmanpw
     init: true
+
   mysql:
     image: mysql:8.0.38
     # alternative image from Ironbank
     # image: registry1.dso.mil/ironbank/opensource/mysql/mysql8:8.0.31
-    command: --innodb-buffer-pool-size=512M --sort_buffer_size=64M 
+    command: --innodb-buffer-pool-size=512M --sort_buffer_size=64M
     environment:
       - MYSQL_ROOT_PASSWORD=rootpw
       - MYSQL_USER=stigman
@@ -57,5 +60,3 @@ services:
       - MYSQL_PASSWORD=stigmanpw
     # volumes:
     #   - ./mysql-data:/var/lib/mysql
-
-    
